@@ -1,5 +1,6 @@
 import logging
-from datetime import timedelta
+from datetime import timedelta, datetime
+from functools import reduce
 
 import homeassistant.helpers.config_validation as cv
 from homeassistant.components.sensor import PLATFORM_SCHEMA
@@ -20,9 +21,27 @@ class CheapestFinder(Entity):
     def name(self):
         """Return the name of the entity."""
         return DOMAIN
+    
+    def cheapest_start(self, length, prices):
+        if len(prices) <= length:
+            return 0
+        
+        sums = []
+        for i in range(len(prices) - length + 1):
+            sums.append(reduce(lambda a, b: a+b, prices[i:length+i]))
+
+        idx = 0
+        val = float('inf')
+        for i, sum in enumerate(sums):
+            if sum < val:
+                val = sum
+                idx = i
+
+        return idx
 
     async def async_create_events(self):
-        """Create calendar events."""
+        prices = self.nordpool["today"] + self.nordpool["tomorrow"]
+        
         for event in self._events:
             _LOGGER.error(event)
 
@@ -38,9 +57,11 @@ class CheapestFinder(Entity):
             # }
 
             # _LOGGER.error(data)
-            _LOGGER.error("ASYNC!")
-            _LOGGER.error(self.nordpool["today"])
-            _LOGGER.error(self.nordpool["tomorrow"])
+            today = datetime.now().date()
+            datetime.datetime(today.year, today.month, today.day, 0, 0)
+
+            _LOGGER.error(datetime.now().hour)
+
             # try:
             #     await self.hass.services.async_call(
             #         "calendar", "create_event", data, blocking=True
