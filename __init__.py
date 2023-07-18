@@ -31,9 +31,9 @@ async def async_setup(hass, config):
         return True
 
     nordpool = config[DOMAIN]["nordpool"]
-    sensor_state = hass.states
+    sensor_state = hass.states.get(nordpool)
 
-    _LOGGER.error(sensor_state.all())
+    _LOGGER.error(sensor_state)
 
     attributes = sensor_state.attributes
 
