@@ -33,6 +33,7 @@ async def async_setup(hass, config):
     nordpool = config[DOMAIN]["nordpool"]
     sensor_state = hass.states.get(nordpool)
 
+    _LOGGER.error(nordpool)
     _LOGGER.error(sensor_state)
     _LOGGER.error("Was there")
 
