@@ -34,6 +34,7 @@ async def async_setup(hass, config):
     sensor_state = hass.states.get(nordpool)
 
     _LOGGER.error(sensor_state)
+    _LOGGER.error("Was there")
 
     attributes = sensor_state.attributes
 
