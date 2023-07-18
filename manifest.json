@@ -1,0 +1,12 @@
+{
+    "domain": "nordpool-cheapest",
+    "name": "Nordpool cheapest hours",
+    "dependencies": ["calendar"],
+    "codeowners": ["@skayred"],
+    "version": "0.1.0",
+    "requirements": [],
+    "iot_class": "data",
+    "config_flow": false,
+    "python_script": "sensor.py"
+  }
+  
