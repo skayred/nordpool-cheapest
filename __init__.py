@@ -32,7 +32,7 @@ async def async_setup(hass, config):
     """Set up the Hourly Calendar Event component."""
     if DOMAIN not in config:
         return True
-    _LOGGER.error(config)
+    _LOGGER.error(config[DOMAIN])
 
     nordpool = config[DOMAIN]["nordpool"]
 
