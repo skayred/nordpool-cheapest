@@ -1,30 +1,30 @@
 import logging
-import homeassistant.helpers.config_validation as cv
-from homeassistant.components.sensor import PLATFORM_SCHEMA
 import voluptuous as vol
-from homeassistant.const import CONF_NAME
-from homeassistant.helpers.entity import Entity
 
 _LOGGER = logging.getLogger(__name__)
 
 DOMAIN = "nordpool-cheapest"
 
-EVENT_SCHEMA = cv.schema_with_slug_keys(
+CONFIG_SCHEMA = vol.Schema(
     {
-        cv.Required(CONF_NAME): cv.string,
-        cv.Required("start_hour"): cv.positive_int,
-        cv.Required("end_hour"): cv.positive_int,
-        cv.Required("length"): cv.positive_int,
-    }
-)
-
-CONFIG_SCHEMA = cv.schema_with_slug_keys(
-    cv.positive_int,
-    {
-        cv.Optional(CONF_NAME): cv.string,
-        cv.Required("events"): cv.ensure_list(EVENT_SCHEMA),
-        cv.Required("nordpool"): cv.string,
+        DOMAIN: vol.All(
+            [
+                {
+                    vol.Required("name", default="Hourly Event"): str,
+                    vol.Required("nordpool", default="sensor.nordpool_kwh_fi_eur_3_10_024"): str,
+                    vol.Required("events"): [
+                        {
+                            vol.Required("name"): str,
+                            vol.Required("start_hour"): int,
+                            vol.Required("end_hour"): int,
+                            vol.Required("length"): int,
+                        }
+                    ],
+                }
+            ]
+        )
     },
+    extra=vol.ALLOW_EXTRA,
 )
 
 async def async_setup(hass, config):
