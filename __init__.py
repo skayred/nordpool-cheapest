@@ -1,5 +1,6 @@
 import logging
 import voluptuous as vol
+from sensor import CheapestFinder
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -28,19 +29,22 @@ async def async_setup(hass, config):
     """Set up the Hourly Calendar Event component."""
     if DOMAIN not in config:
         return True
-    _LOGGER.error(config[DOMAIN])
 
     nordpool = config[DOMAIN]["nordpool"]
+    sensor_state = hass.states.get(nordpool)
+    attributes = sensor_state.attributes
 
-    _LOGGER.error("Nordpool reading")
-    _LOGGER.error(nordpool)
+    # for entry_config in config[DOMAIN]["events"]:
+    #     title = entry_config["name"]
+    #     start_hour = entry_config["start_hour"]
+    #     end_hour = entry_config["end_hour"]
+    #     length = entry_config["length"]
 
-    for entry_config in config[DOMAIN]["events"]:
-        title = entry_config["name"]
-        start_hour = entry_config["start_hour"]
-        end_hour = entry_config["end_hour"]
-        length = entry_config["length"]
+    #     _LOGGER.error("Configuring %s with title '%s' and events: %s, %s, %s", DOMAIN, title, start_hour, end_hour, length)
 
-        _LOGGER.info("Configuring %s with title '%s' and events: %s, %s, %s", DOMAIN, title, start_hour, end_hour, length)
+    entity = CheapestFinder(config[DOMAIN]["events"], attributes)
+
+    # Schedule the initial event creation
+    await entity.async_create_events()
 
     return True
