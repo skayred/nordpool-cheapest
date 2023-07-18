@@ -1,6 +1,6 @@
 import logging
 import voluptuous as vol
-from sensor import CheapestFinder
+from finder import CheapestFinder
 
 _LOGGER = logging.getLogger(__name__)
 
