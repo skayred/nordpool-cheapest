@@ -24,6 +24,8 @@ class CheapestFinder(Entity):
     async def async_create_events(self):
         """Create calendar events."""
         for event in self._events:
+            _LOGGER.error(event)
+
             title = event["name"]
             event_start = timedelta(hours=event["start_hour"])
             event_end = timedelta(hours=event["end_hour"])
