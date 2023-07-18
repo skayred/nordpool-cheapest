@@ -31,13 +31,13 @@ class CheapestFinder(Entity):
             event_end = timedelta(hours=event["end_hour"])
             event_length = timedelta(hours=event["length"])
 
-            data = {
-                "title": title,
-                "start": (event_start - event_length).isoformat(),
-                "end": event_end.isoformat(),
-            }
+            # data = {
+            #     "title": title,
+            #     "start": (event_start - event_length).isoformat(),
+            #     "end": event_end.isoformat(),
+            # }
 
-            _LOGGER.error(data)
+            # _LOGGER.error(data)
             _LOGGER.error("ASYNC!")
             _LOGGER.error(self.nordpool.today)
             # try:
