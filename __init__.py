@@ -33,16 +33,16 @@ async def async_setup(hass, config):
     if DOMAIN not in config:
         return True
     
-    nordpool = config[DOMAIN].get("nordpool")
+    nordpool = config[DOMAIN]["nordpool"]
 
     _LOGGER.error("Nordpool reading")
     _LOGGER.error(nordpool)
 
-    for entry_config in config[DOMAIN].get("events"):
-        title = entry_config.get("name", "Hourly Event")
-        start_hour = entry_config.get("start_hour")
-        end_hour = entry_config.get("end_hour")
-        length = entry_config.get("length")
+    for entry_config in config[DOMAIN]["events"]:
+        title = entry_config["name"]
+        start_hour = entry_config["start_hour"]
+        end_hour = entry_config["end_hour"]
+        length = entry_config["length"]
 
         _LOGGER.info("Configuring %s with title '%s' and events: %s, %s, %s", DOMAIN, title, start_hour, end_hour, length)
 
