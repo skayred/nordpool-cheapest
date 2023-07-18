@@ -39,7 +39,7 @@ class CheapestFinder(Entity):
 
             # _LOGGER.error(data)
             _LOGGER.error("ASYNC!")
-            _LOGGER.error(self.nordpool.today)
+            _LOGGER.error(self.nordpool)
             # try:
             #     await self.hass.services.async_call(
             #         "calendar", "create_event", data, blocking=True
