@@ -46,12 +46,13 @@ async def async_setup(hass, config):
     # # Schedule the initial event creation
     # await entity.async_create_events()
 
-    async def _handle_sensor_state_change(entity_id, old_state, new_state):
+    return True
+
+async def _handle_sensor_state_change(entity_id, old_state, new_state):
+    if not started:
         if new_state is not None:
-            unsub()
-            sensor_attributes = new_state.attributes        
+            started = True
+            sensor_attributes = new_state.attributes   
 
             _LOGGER.info("Sensor entity %s is available. Configuring...", entity_id)
             _LOGGER.error(sensor_attributes)
-
-    return True
