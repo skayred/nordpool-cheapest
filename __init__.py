@@ -56,11 +56,10 @@ async def async_setup(hass, config):
 
 async def _handle_sensor_state_change(hass, entity_id, old_state, new_state):
     if new_state is not None:
-        async_track_state_change(
-            hass, entity_id, _handle_sensor_state_change, remove_listener=True
-        )
+        if "is_configured" not in hass.data[DOMAIN]:
+            hass.data[DOMAIN]["is_configured"] = True
 
-        sensor_attributes = new_state.attributes
+            sensor_attributes = new_state.attributes
 
-        _LOGGER.info("Sensor entity %s is available. Configuring...", entity_id)
-        _LOGGER.error(sensor_attributes)
+            _LOGGER.info("Sensor entity %s is available. Configuring...", entity_id)
+            _LOGGER.error(sensor_attributes)
