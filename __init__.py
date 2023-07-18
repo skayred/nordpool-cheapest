@@ -38,7 +38,7 @@ async def async_setup(hass, config):
     nordpool = config[DOMAIN]["nordpool"]
     sensor_state = hass.states.get(nordpool)
 
-    handle_sensor_state_change = partial(_handle_sensor_state_change, hass)
+    handle_sensor_state_change = partial(_handle_sensor_state_change, config)
 
     # Listen for state changes of the sensor entity
     async_track_state_change(
@@ -54,10 +54,10 @@ async def async_setup(hass, config):
 
     return True
 
-async def _handle_sensor_state_change(hass, entity_id, old_state, new_state):
+async def _handle_sensor_state_change(config, entity_id, old_state, new_state):
     if new_state is not None:
-        if "is_configured" not in hass.data[DOMAIN]:
-            hass.data[DOMAIN]["is_configured"] = True
+        if "is_configured" not in config[DOMAIN]:
+            config[DOMAIN]["is_configured"] = True
 
             sensor_attributes = new_state.attributes
 
