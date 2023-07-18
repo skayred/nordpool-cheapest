@@ -10,9 +10,12 @@ async def async_setup(hass, config):
     if DOMAIN not in config:
         return True
     
-    _LOGGER.error("Nordpool reading")
+    nordpool = config[DOMAIN].get("nordpool")
 
-    for entry_config in config[DOMAIN]:
+    _LOGGER.error("Nordpool reading")
+    _LOGGER.error(nordpool)
+
+    for entry_config in config[DOMAIN].get("events"):
         title = entry_config.get("name", "Hourly Event")
         events = entry_config["events"]
 
