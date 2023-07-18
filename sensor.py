@@ -38,10 +38,15 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
 
 async def async_setup(hass, config):
     """Set up the Hourly Calendar Event component."""
+    _LOGGER.error("Initial")
     entities = []
+
+    _LOGGER.error("Nordpool reading")
 
     sensor_state = hass.states.get(cfg.get("nordpool"))
     attributes = sensor_state.attributes
+
+    hass.data.setdefault(DOMAIN, {})
 
     for entity_id, cfg in config[DOMAIN].items():
         name = cfg.get(CONF_NAME, entity_id)
@@ -53,11 +58,35 @@ async def async_setup(hass, config):
         # Schedule the initial event creation
         await entity.async_create_events()
 
-    if entities:
-        hass.data[DOMAIN] = entities
+    return True
+
+async def async_setup_entry(hass, entry):
+    """Set up the Hourly Calendar Event entry."""
+    # Retrieve and store the configuration options from the entry
+    title = entry.data.get("title")
+    events = entry.data.get("events")
+
+    # Perform setup tasks based on the configuration options
+    # ...
+
+    # Store any information that needs to be accessed later
+    hass.data[DOMAIN][entry.entry_id] = {
+        "title": title,
+        "events": events,
+    }
 
     return True
 
+async def async_unload_entry(hass, entry):
+    """Unload the Hourly Calendar Event entry."""
+    # Perform cleanup tasks for the entry
+    # ...
+
+    # Remove stored information
+    if entry.entry_id in hass.data[DOMAIN]:
+        del hass.data[DOMAIN][entry.entry_id]
+
+    return True
 
 class HourlyCalendarEventEntity(Entity):
     """Representation of an Hourly Calendar Event."""

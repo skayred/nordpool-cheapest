@@ -6,6 +6,9 @@
     "version": "0.1.0",
     "requirements": [],
     "iot_class": "data",
-    "config_flow": true
+    "config_flow": true,
+    "zeroconf": [],
+    "homeassistant": "2021.9.0",
+    "python_script": "sensor.py"
   }
   
