@@ -6,6 +6,7 @@ from homeassistant.helpers.event import async_track_state_change
 from .finder import CheapestFinder
 
 _LOGGER = logging.getLogger(__name__)
+started = False
 
 DOMAIN = "nordpool-cheapest"
 
@@ -36,7 +37,7 @@ async def async_setup(hass, config):
     nordpool = config[DOMAIN]["nordpool"]
     sensor_state = hass.states.get(nordpool)
 
-    async_track_state_change(hass, nordpool, _handle_sensor_state_change)
+    unsub = async_track_state_change(hass, nordpool, _handle_sensor_state_change)
 
     _LOGGER.info("Waiting for sensor entity: %s", nordpool)
 
@@ -45,12 +46,12 @@ async def async_setup(hass, config):
     # # Schedule the initial event creation
     # await entity.async_create_events()
 
+    async def _handle_sensor_state_change(entity_id, old_state, new_state):
+        if new_state is not None:
+            unsub()
+            sensor_attributes = new_state.attributes        
+
+            _LOGGER.info("Sensor entity %s is available. Configuring...", entity_id)
+            _LOGGER.error(sensor_attributes)
+
     return True
-
-async def _handle_sensor_state_change(entity_id, old_state, new_state):
-    if new_state is not None:
-        sensor_attributes = new_state.attributes        
-
-        _LOGGER.info("Sensor entity %s is available. Configuring...", entity_id)
-        _LOGGER.error(sensor_attributes)
-
