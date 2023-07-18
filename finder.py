@@ -50,7 +50,7 @@ class CheapestFinder(Entity):
             #     _LOGGER.info("Calendar event created: %s", event[CONF_NAME])
 
         # Schedule the next event creation
-        await self.async_schedule_next_events()
+        # await self.async_schedule_next_events()
 
     async def async_schedule_next_events(self):
         """Schedule the next event creation."""
