@@ -6,7 +6,6 @@
     "version": "0.1.0",
     "requirements": [],
     "iot_class": "data",
-    "config_flow": false,
-    "python_script": "sensor.py"
+    "config_flow": true
   }
   
