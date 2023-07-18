@@ -33,23 +33,25 @@ async def async_setup(hass, config):
     nordpool = config[DOMAIN]["nordpool"]
     sensor_state = hass.states.get(nordpool)
 
-    _LOGGER.error(nordpool)
-    _LOGGER.error(sensor_state)
-    _LOGGER.error("Was there")
+    async_track_state_change(hass, nordpool, _handle_sensor_state_change)
 
-    attributes = sensor_state.attributes
+    _LOGGER.info("Waiting for sensor entity: %s", sensor_entity_id)
 
-    # for entry_config in config[DOMAIN]["events"]:
-    #     title = entry_config["name"]
-    #     start_hour = entry_config["start_hour"]
-    #     end_hour = entry_config["end_hour"]
-    #     length = entry_config["length"]
+    # entity = CheapestFinder(config[DOMAIN]["events"], attributes)
 
-    #     _LOGGER.error("Configuring %s with title '%s' and events: %s, %s, %s", DOMAIN, title, start_hour, end_hour, length)
-
-    entity = CheapestFinder(config[DOMAIN]["events"], attributes)
-
-    # Schedule the initial event creation
-    await entity.async_create_events()
+    # # Schedule the initial event creation
+    # await entity.async_create_events()
 
     return True
+
+async def _handle_sensor_state_change(entity_id, old_state, new_state):
+    if new_state is not None:
+        sensor_attributes = new_state.attributes
+        
+        async_track_state_change(
+            hass, sensor_entity_id, _handle_sensor_state_change, remove_listener=True
+        )
+
+        _LOGGER.info("Sensor entity %s is available. Configuring...", entity_id)
+        _LOGGER.error(sensor_attributes)
+
