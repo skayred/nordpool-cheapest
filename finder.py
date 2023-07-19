@@ -14,7 +14,8 @@ _LOGGER = logging.getLogger(__name__)
 DOMAIN = "nordpool-cheapest"
 
 class CheapestFinder(Entity):
-    def __init__(self, events, tz, nordpool):
+    def __init__(self, hass, events, tz, nordpool):
+        self._hass = hass
         self._events = events
         self._tz = tz
         self.nordpool = nordpool
@@ -94,7 +95,7 @@ class CheapestFinder(Entity):
             }
 
             try:
-                await self.hass.services.async_call(
+                await self._hass.services.async_call(
                     "calendar", "create_event", 
                     {
                         "calendar_name": calendar,

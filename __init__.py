@@ -38,7 +38,7 @@ async def async_setup(hass, config):
         return True
 
     nordpool = config[DOMAIN]["nordpool"]
-    handle_sensor_state_change = partial(_handle_sensor_state_change, config)
+    handle_sensor_state_change = partial(_handle_sensor_state_change, config, hass)
 
     # Listen for state changes of the sensor entity
     async_track_state_change(
@@ -49,7 +49,7 @@ async def async_setup(hass, config):
 
     return True
 
-async def _handle_sensor_state_change(config, entity_id, old_state, new_state):
+async def _handle_sensor_state_change(config, hass, entity_id, old_state, new_state):
     if new_state is not None:
         if "is_configured" not in config[DOMAIN]:
             config[DOMAIN]["is_configured"] = True
@@ -58,5 +58,5 @@ async def _handle_sensor_state_change(config, entity_id, old_state, new_state):
 
             _LOGGER.info("Sensor entity %s is available. Configuring...", entity_id)
 
-            entity = CheapestFinder(config[DOMAIN]["events"], config[DOMAIN]["timezone"], sensor_attributes)
+            entity = CheapestFinder(hass, config[DOMAIN]["events"], config[DOMAIN]["timezone"], sensor_attributes)
             await entity.async_create_events()
