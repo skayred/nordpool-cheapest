@@ -71,6 +71,9 @@ class CheapestFinder(Entity):
             today = datetime.now().date()
             datetime(today.year, today.month, today.day, 0, 0)
 
+            if event_end <= event_start:
+                event_end = event_end + 24
+
             if local.hour < event_start:
                 # still eligible for today - maybe for multiday
                 _LOGGER.info("Checking the cheapest prices for %s (%s) for TODAY between %s and %s, length %s", title, calendar, event_start, event_end, event_length)
@@ -78,9 +81,9 @@ class CheapestFinder(Entity):
             else:
                 # check tomorrow in that case
                 _LOGGER.info("Checking the cheapest prices for %s (%s) for TOMORROW between %s and %s, length %s", title, calendar, event_start, event_end, event_length)
-                event_start = event_start + self.cheapest_start(event_length, prices[24+event_start:24+event_end])
+                event_start = event_start + self.cheapest_start(event_length, prices[24+event_start:max(24+event_end, 47)])
 
-            start = datetime(local.year, local.month, local.day, 0, 0, 0, tz=pytz.utc) + timedelta(hours = event_start)
+            start = datetime(local.year, local.month, local.day, 0, 0, 0, 0) + timedelta(hours = event_start)
             end = start + timedelta(hours = event_length)
 
             _LOGGER.info("Best time found: %s..%s", start, end)
