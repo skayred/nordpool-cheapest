@@ -57,11 +57,13 @@ class CheapestFinder(Entity):
             # }
 
             # _LOGGER.error(data)
+            _LOGGER.error("000")
             today = datetime.now().date()
             datetime(today.year, today.month, today.day, 0, 0)
 
             _LOGGER.error(datetime.now().hour)
             _LOGGER.error(datetime.now())
+            _LOGGER.error("111")
 
             # try:
             #     await self.hass.services.async_call(
