@@ -65,12 +65,6 @@ class CheapestFinder(Entity):
             event_end = event["end_hour"]
             event_length = event["length"]
 
-            # data = {
-            #     "title": title,
-            #     "start": (event_start - event_length).isoformat(),
-            #     "end": event_end.isoformat(),
-            # }
-
             today = datetime.now().date()
             datetime(today.year, today.month, today.day, 0, 0)
 
@@ -85,22 +79,32 @@ class CheapestFinder(Entity):
             else:
                 # check tomorrow in that case
                 _LOGGER.info("Checking the cheapest prices for %s (%s) for TOMORROW between %s and %s, length %s", title, calendar, event_start, event_end, event_length)
-                _LOGGER.info("Diff %s %s", 24+event_start, max(24+event_end, 47))
-                event_start = event_start + self.cheapest_start(event_length, prices[24+event_start:max(24+event_end, 47)])
+                _LOGGER.info("Diff %s %s", 24+event_start, min(24+event_end, 47))
+                event_start = event_start + self.cheapest_start(event_length, prices[24+event_start:min(24+event_end, 47)])
 
             start = datetime(local.year, local.month, local.day, 0, 0, 0, 0) + timedelta(hours = event_start)
             end = start + timedelta(hours = event_length)
 
             _LOGGER.info("Best time found: %s..%s", start, end)
 
-            # try:
-            #     await self.hass.services.async_call(
-            #         "calendar", "create_event", data, blocking=True
-            #     )
-            # except Exception as e:
-            #     _LOGGER.error("Error creating calendar event: %s", str(e))
-            # else:
-            #     _LOGGER.info("Calendar event created: %s", event[CONF_NAME])
+            data = {
+                "title": title,
+                "start": (event_start - event_length).isoformat(),
+                "end": event_end.isoformat(),
+            }
+
+            try:
+                await self.hass.services.async_call(
+                    "calendar", "create_event", 
+                    {
+                        "calendar_name": calendar,
+                        "data": data,
+                    },
+                )
+            except Exception as e:
+                _LOGGER.error("Error creating calendar event: %s", str(e))
+            else:
+                _LOGGER.info("Calendar event created: %s", event[CONF_NAME])
 
         # Schedule the next event creation
         # await self.async_schedule_next_events()
