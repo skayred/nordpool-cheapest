@@ -89,8 +89,8 @@ class CheapestFinder(Entity):
 
             data = {
                 "title": title,
-                "start": (event_start - event_length).isoformat(),
-                "end": event_end.isoformat(),
+                "start": start,
+                "end": end,
             }
 
             try:
