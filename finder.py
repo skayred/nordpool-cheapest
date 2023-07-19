@@ -64,7 +64,7 @@ class CheapestFinder(Entity):
             today = datetime.now().date()
             datetime(today.year, today.month, today.day, 0, 0)
 
-            utc_dt = datetime.datetime.now(tz=pytz.utc)
+            utc_dt = datetime.now(tz=pytz.utc)
             local = tz.normalize(utc_dt)
 
             _LOGGER.error(local.hour)
