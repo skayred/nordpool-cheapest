@@ -58,9 +58,9 @@ class CheapestFinder(Entity):
 
             title = event["name"]
             calendar = event["calendar"]
-            event_start = timedelta(hours=event["start_hour"])
-            event_end = timedelta(hours=event["end_hour"])
-            event_length = timedelta(hours=event["length"])
+            event_start = event["start_hour"]
+            event_end = event["end_hour"]
+            event_length = event["length"]
 
             # data = {
             #     "title": title,
