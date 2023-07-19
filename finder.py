@@ -25,6 +25,7 @@ class CheapestFinder(Entity):
         return DOMAIN
     
     def cheapest_start(self, length, prices):
+        _LOGGER.info(prices)
         if len(prices) <= length:
             return 0
         
@@ -49,6 +50,8 @@ class CheapestFinder(Entity):
     async def async_create_events(self):
         prices = self.nordpool["today"] + self.nordpool["tomorrow"]
         tz = pytz.timezone(self._tz)
+
+        _LOGGER.info(prices)
 
         utc_dt = datetime.now(tz=pytz.utc)
         local = tz.normalize(utc_dt)
@@ -77,10 +80,12 @@ class CheapestFinder(Entity):
             if local.hour < event_start:
                 # still eligible for today - maybe for multiday
                 _LOGGER.info("Checking the cheapest prices for %s (%s) for TODAY between %s and %s, length %s", title, calendar, event_start, event_end, event_length)
+                _LOGGER.info("Diff %s %s", event_start, event_end)
                 event_start = event_start + self.cheapest_start(event_length, prices[event_start:event_end])
             else:
                 # check tomorrow in that case
                 _LOGGER.info("Checking the cheapest prices for %s (%s) for TOMORROW between %s and %s, length %s", title, calendar, event_start, event_end, event_length)
+                _LOGGER.info("Diff %s %s", 24+event_start, max(24+event_end, 47))
                 event_start = event_start + self.cheapest_start(event_length, prices[24+event_start:max(24+event_end, 47)])
 
             start = datetime(local.year, local.month, local.day, 0, 0, 0, 0) + timedelta(hours = event_start)
