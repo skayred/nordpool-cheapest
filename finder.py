@@ -101,18 +101,3 @@ class CheapestFinder(Entity):
                 _LOGGER.error("Error creating calendar event: %s", str(e))
             else:
                 _LOGGER.info("Calendar event created: %s", event[CONF_NAME])
-
-        # Schedule the next event creation
-        # await self.async_schedule_next_events()
-
-    async def async_schedule_next_events(self):
-        """Schedule the next event creation."""
-        next_event = timedelta(minutes=1)
-        await self.async_create_events()
-        await self.async_schedule_next_event(next_event)
-
-    async def async_schedule_next_event(self, next_event):
-        """Schedule the next event creation."""
-        async_call_later(
-            self.hass, (next_event - dt_util.utcnow()).total_seconds(), self.async_create_events
-        )

@@ -1,9 +1,9 @@
 import logging
 import voluptuous as vol
 from functools import partial
+from datetime import timedelta, datetime
 
-from homeassistant import config_entries
-from homeassistant.helpers.event import async_track_state_change
+from homeassistant.helpers.event import async_track_state_change, async_call_later
 
 from .finder import CheapestFinder
 
@@ -54,9 +54,27 @@ async def _handle_sensor_state_change(config, hass, entity_id, old_state, new_st
         if "is_configured" not in config[DOMAIN]:
             config[DOMAIN]["is_configured"] = True
 
-            sensor_attributes = new_state.attributes
+            async_call_later(hass, seconds_until(), lambda: _run_daily_task(hass, config, new_state.attributes))
 
             _LOGGER.info("Sensor entity %s is available. Configuring...", entity_id)
 
-            entity = CheapestFinder(hass, config[DOMAIN]["events"], config[DOMAIN]["timezone"], sensor_attributes)
-            await entity.async_create_events()
+def seconds_until():
+    """Calculate the number of seconds until 14:00."""
+    now = datetime.now()
+    target_time = now.replace(hour=14, minute=0, second=0, microsecond=0)
+    if now > target_time:
+        # Target time has already passed, schedule for the next day
+        target_time = target_time + timedelta(days=1)
+    time_diff = target_time - now
+    return time_diff.total_seconds()
+
+async def _run_daily_task(hass, config, sensor_attributes):
+    """Perform the daily task at 14:00."""
+    _LOGGER.info("Running daily task at 14:00")
+    entity = CheapestFinder(hass, config[DOMAIN]["events"], config[DOMAIN]["timezone"], sensor_attributes)
+    await entity.async_create_events()
+
+    nordpool = config[DOMAIN]["nordpool"]
+    attrs = hass.states.get(nordpool).attributes
+
+    async_call_later(hass, seconds_until(), lambda: _run_daily_task(hass, config, attrs))
