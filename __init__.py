@@ -19,6 +19,7 @@ CONFIG_SCHEMA = vol.Schema(
             vol.Required("events"): [
                 {
                     vol.Required("name"): str,
+                    vol.Required("calendar"): str,
                     vol.Required("start_hour"): int,
                     vol.Required("end_hour"): int,
                     vol.Required("length"): int,

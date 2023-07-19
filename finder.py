@@ -58,7 +58,7 @@ class CheapestFinder(Entity):
 
             # _LOGGER.error(data)
             today = datetime.now().date()
-            datetime.datetime(today.year, today.month, today.day, 0, 0)
+            datetime(today.year, today.month, today.day, 0, 0)
 
             _LOGGER.error(datetime.now().hour)
 
