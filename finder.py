@@ -32,6 +32,9 @@ class CheapestFinder(Entity):
         for i in range(len(prices) - length + 1):
             sums.append(reduce(lambda a, b: a+b, prices[i:length+i]))
 
+        _LOGGER.info("Sums:")
+        _LOGGER.info(sums)
+
         idx = 0
         val = float('inf')
         for i, sum in enumerate(sums):
@@ -39,16 +42,22 @@ class CheapestFinder(Entity):
                 val = sum
                 idx = i
 
+        _LOGGER.info("Cheapest sum was %s for index %s", val, idx)
+
         return idx
 
     async def async_create_events(self):
         prices = self.nordpool["today"] + self.nordpool["tomorrow"]
         tz = pytz.timezone(self._tz)
+
+        utc_dt = datetime.now(tz=pytz.utc)
+        local = tz.normalize(utc_dt)
         
         for event in self._events:
             _LOGGER.error(event)
 
             title = event["name"]
+            calendar = event["calendar"]
             event_start = timedelta(hours=event["start_hour"])
             event_end = timedelta(hours=event["end_hour"])
             event_length = timedelta(hours=event["length"])
@@ -59,17 +68,22 @@ class CheapestFinder(Entity):
             #     "end": event_end.isoformat(),
             # }
 
-            # _LOGGER.error(data)
-            _LOGGER.error("000")
             today = datetime.now().date()
             datetime(today.year, today.month, today.day, 0, 0)
 
-            utc_dt = datetime.now(tz=pytz.utc)
-            local = tz.normalize(utc_dt)
+            if local.hour < event_start:
+                # still eligible for today - maybe for multiday
+                _LOGGER.info("Checking the cheapest prices for %s (%s) for TODAY between %s and %s, length %s", title, calendar, event_start, event_end, event_length)
+                event_start = event_start + self.cheapest_start(event_length, prices[event_start:event_end])
+            else:
+                # check tomorrow in that case
+                _LOGGER.info("Checking the cheapest prices for %s (%s) for TOMORROW between %s and %s, length %s", title, calendar, event_start, event_end, event_length)
+                event_start = event_start + self.cheapest_start(event_length, prices[24+event_start:24+event_end])
 
-            _LOGGER.error(local.hour)
-            _LOGGER.error(local)
-            _LOGGER.error("111")
+            start = datetime(local.year, local.month, local.day, 0, 0, 0, tz=pytz.utc) + timedelta(hours = event_start)
+            end = start + timedelta(hours = event_length)
+
+            _LOGGER.info("Best time found: %s..%s", start, end)
 
             # try:
             #     await self.hass.services.async_call(
