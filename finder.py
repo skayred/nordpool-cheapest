@@ -1,6 +1,7 @@
 import logging
 from datetime import timedelta, datetime
 from functools import reduce
+import pytz
 
 import homeassistant.helpers.config_validation as cv
 from homeassistant.components.sensor import PLATFORM_SCHEMA
@@ -13,8 +14,9 @@ _LOGGER = logging.getLogger(__name__)
 DOMAIN = "nordpool-cheapest"
 
 class CheapestFinder(Entity):
-    def __init__(self, events, nordpool):
+    def __init__(self, events, tz, nordpool):
         self._events = events
+        self._tz = tz
         self.nordpool = nordpool
 
     @property
@@ -41,6 +43,7 @@ class CheapestFinder(Entity):
 
     async def async_create_events(self):
         prices = self.nordpool["today"] + self.nordpool["tomorrow"]
+        tz = pytz.timezone(self._tz)
         
         for event in self._events:
             _LOGGER.error(event)
@@ -61,8 +64,11 @@ class CheapestFinder(Entity):
             today = datetime.now().date()
             datetime(today.year, today.month, today.day, 0, 0)
 
-            _LOGGER.error(datetime.now().hour)
-            _LOGGER.error(datetime.now())
+            utc_dt = datetime.datetime.now(tz=pytz.utc)
+            local = tz.normalize(utc_dt)
+
+            _LOGGER.error(local.hour)
+            _LOGGER.error(local)
             _LOGGER.error("111")
 
             # try:

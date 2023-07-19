@@ -16,6 +16,7 @@ CONFIG_SCHEMA = vol.Schema(
         DOMAIN: {
             vol.Required("name", default="Hourly Event"): str,
             vol.Required("nordpool", default="sensor.nordpool_kwh_fi_eur_3_10_024"): str,
+            vol.Required("timezone", default="Europe/Helsinki"): str,
             vol.Required("events"): [
                 {
                     vol.Required("name"): str,
@@ -57,5 +58,5 @@ async def _handle_sensor_state_change(config, entity_id, old_state, new_state):
 
             _LOGGER.info("Sensor entity %s is available. Configuring...", entity_id)
 
-            entity = CheapestFinder(config[DOMAIN]["events"], sensor_attributes)
+            entity = CheapestFinder(config[DOMAIN]["events"], config[DOMAIN]["timezone"], sensor_attributes)
             await entity.async_create_events()
