@@ -89,19 +89,13 @@ class CheapestFinder(Entity):
             _LOGGER.info("Best time found: %s..%s", start, end)
 
             data = {
-                "title": title,
-                "start": start,
-                "end": end,
+                "summary": title,
+                "start_date_time": start.strftime("%Y-%m-%d %H:%M:%S"),
+                "end_date_time": end.strftime("%Y-%m-%d %H:%M:%S"),
             }
 
             try:
-                await self._hass.services.async_call(
-                    "calendar", "create_event", 
-                    {
-                        "calendar_name": calendar,
-                        "data": data,
-                    },
-                )
+                await self._hass.services.async_call("calendar", "create_event", entity_id = calendar, data = data)
             except Exception as e:
                 _LOGGER.error("Error creating calendar event: %s", str(e))
             else:
