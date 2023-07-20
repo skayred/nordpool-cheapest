@@ -61,7 +61,7 @@ async def _handle_sensor_state_change(config, hass, entity_id, old_state, new_st
 def seconds_until():
     """Calculate the number of seconds until 14:00."""
     now = datetime.now()
-    target_time = now.replace(hour=15, minute=45, second=0, microsecond=0)
+    target_time = now.replace(hour=15, minute=50, second=0, microsecond=0)
     if now > target_time:
         # Target time has already passed, schedule for the next day
         target_time = target_time + timedelta(days=1)
