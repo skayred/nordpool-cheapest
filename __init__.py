@@ -54,14 +54,14 @@ async def _handle_sensor_state_change(config, hass, entity_id, old_state, new_st
         if "is_configured" not in config[DOMAIN]:
             config[DOMAIN]["is_configured"] = True
 
-            async_call_later(hass, seconds_until(), lambda x: _run_daily_task(hass, config, new_state.attributes))
+            async_call_later(hass, seconds_until(), lambda x: (await _run_daily_task(hass, config, new_state.attributes)).__anext__())
 
             _LOGGER.info("Sensor entity %s is available. Configuring...", entity_id)
 
 def seconds_until():
     """Calculate the number of seconds until 14:00."""
     now = datetime.now()
-    target_time = now.replace(hour=14, minute=30, second=0, microsecond=0)
+    target_time = now.replace(hour=15, minute=45, second=0, microsecond=0)
     if now > target_time:
         # Target time has already passed, schedule for the next day
         target_time = target_time + timedelta(days=1)
