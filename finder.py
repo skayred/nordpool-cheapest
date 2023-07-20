@@ -48,7 +48,7 @@ class CheapestFinder(Entity):
 
         return idx
 
-    async def async_create_events(self):
+    def create_events(self):
         prices = self.nordpool["today"] + self.nordpool["tomorrow"]
         tz = pytz.timezone(self._tz)
 
@@ -96,7 +96,7 @@ class CheapestFinder(Entity):
             }
 
             try:
-                await self._hass.services.async_call("calendar", "create_event", data)
+                self._hass.services.call("calendar", "create_event", data)
             except Exception as e:
                 _LOGGER.error("Error creating calendar event: %s", str(e))
             else:

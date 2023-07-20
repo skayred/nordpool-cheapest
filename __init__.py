@@ -54,7 +54,7 @@ async def _handle_sensor_state_change(config, hass, entity_id, old_state, new_st
         if "is_configured" not in config[DOMAIN]:
             config[DOMAIN]["is_configured"] = True
 
-            async_call_later(hass, seconds_until(), lambda x: (await _run_daily_task(hass, config, new_state.attributes)).__anext__())
+            async_call_later(hass, seconds_until(), lambda x: _run_daily_task(hass, config, new_state.attributes))
 
             _LOGGER.info("Sensor entity %s is available. Configuring...", entity_id)
 
@@ -68,11 +68,11 @@ def seconds_until():
     time_diff = target_time - now
     return time_diff.total_seconds()
 
-async def _run_daily_task(hass, config, sensor_attributes):
+def _run_daily_task(hass, config, sensor_attributes):
     """Perform the daily task at 14:00."""
     _LOGGER.info("Running daily task at 14:00")
     entity = CheapestFinder(hass, config[DOMAIN]["events"], config[DOMAIN]["timezone"], sensor_attributes)
-    await entity.async_create_events()
+    entity.create_events()
 
     nordpool = config[DOMAIN]["nordpool"]
     attrs = hass.states.get(nordpool).attributes
